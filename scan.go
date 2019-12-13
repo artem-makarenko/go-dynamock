@@ -37,3 +37,23 @@ func (e *MockDynamoDB) Scan(input *dynamodb.ScanInput) (*dynamodb.ScanOutput, er
 
 	return nil, fmt.Errorf("Scan Table Expectation Not Found")
 }
+
+// ScanWithContext - this func will be invoked when test running matching expectation with actual input
+func (e *MockDynamoDB) ScanWithContext(ctx aws.Context, input *dynamodb.ScanInput) (*dynamodb.ScanOutput, error) {
+	if len(e.dynaMock.ScanExpect) > 0 {
+		x := e.dynaMock.ScanExpect[0] //get first element of expectation
+
+		if x.table != nil {
+			if *x.table != *input.TableName {
+				return nil, fmt.Errorf("Expect table %s but found table %s", *x.table, *input.TableName)
+			}
+		}
+
+		// delete first element of expectation
+		e.dynaMock.ScanExpect = append(e.dynaMock.ScanExpect[:0], e.dynaMock.ScanExpect[1:]...)
+
+		return x.output, nil
+	}
+
+	return nil, fmt.Errorf("Scan Table With Context Expectation Not Found")
+}
