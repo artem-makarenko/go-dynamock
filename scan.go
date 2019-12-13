@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
@@ -40,7 +41,7 @@ func (e *MockDynamoDB) Scan(input *dynamodb.ScanInput) (*dynamodb.ScanOutput, er
 }
 
 // ScanWithContext - this func will be invoked when test running matching expectation with actual input
-func (e *MockDynamoDB) ScanWithContext(ctx aws.Context, input *dynamodb.ScanInput) (*dynamodb.ScanOutput, error) {
+func (e *MockDynamoDB) ScanWithContext(ctx aws.Context, input *dynamodb.ScanInput, options ...request.Option) (*dynamodb.ScanOutput, error) {
 	if len(e.dynaMock.ScanExpect) > 0 {
 		x := e.dynaMock.ScanExpect[0] //get first element of expectation
 
